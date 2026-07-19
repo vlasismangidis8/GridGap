@@ -1,0 +1,133 @@
+{
+  "_meta": {
+    "description": "GridGap — ADMIE/RAAEY transmission-saturation zones for RES connection, compiled 2026-07-11 from primary sources (raaey.gr, admie.gr, deddie.gr) + DEDDIE saturated-networks map.",
+    "confidence": "Only Peloponnese + Evia are formally, citably saturated for the interconnected system (ΡΑΕ decisions + ΦΕΚ). CONFIRMED 2026-07 via primary-source research: NO Article-14 (Ν.4685/2020) κορεσμένο-δίκτυο characterization decision exists for any of the 7 mainland north/central regions below. Their saturation is real operationally but documented only as exhausted electrical space (ηλεκτρικός χώρος) in the ΑΔΜΗΕ ΔΠΑ 2025-2034 and the ΔΕΔΔΗΕ κορεσμένα-δίκτυα map, plus connection-offer freezes / priority KYAs (ΥΠΕΝ/ΓΔΕ/84014/7123 ΦΕΚ Β' 4333/2022; ΦΕΚ 4918/Β/2024). So they stay 'indicative', NOT citable. The annual Article-14 absorption-margin decisions that do exist (E-74/2023, ΦΕΚ Β' 4668) cover the non-interconnected islands (ΜΔΝ) only.",
+    "caveats": [
+      "The 630 MW (W. Macedonia) / 605 MW (Thessaly) figures are POTENTIAL capacities from a May-2025 ΜΔΝ consultation, NOT current interconnected-system releases.",
+      "Cyclades/Crete are under phased interconnection — margin being released, not a standing saturation declaration.",
+      "Evia characterization = ΡΑΕ 136/2006 & 96/2007; margins ΡΑΕ 1253/2010, 1291/2011 (decision numbers confirmed; exact ΦΕΚ numbers still unconfirmed). Peloponnese ΡΑΕ 699/2012, 231/2022 ΦΕΚ unconfirmed.",
+      "The 'no Article-14 decision' finding is strong but not exhaustively machine-verified against every Διαύγεια record (Diavgeia full-text API timed out). Belt-and-suspenders: a Διαύγεια full-text query on ΡΑΑΕΥ for 'κορεσμ' 2023-2025."
+    ]
+  },
+  "zones": [
+    {
+      "zone_name_el": "Πελοπόννησος (κατάντη ΚΥΤ Κουμουνδούρου)",
+      "zone_name_en": "Peloponnese (downstream of KYT Koumoundourou)",
+      "region": "Περιφέρεια Πελοποννήσου",
+      "prefectures": ["Κορινθία", "Αργολίδα", "Αρκαδία", "Λακωνία", "Μεσσηνία"],
+      "kyt": ["ΚΥΤ Κουμουνδούρου (400/150 kV)", "ΚΥΤ Μεγαλόπολης", "150kV Τροιζηνίας"],
+      "decision": "ΡΑΕ 663/2019 (περιθώρια)· αρχικός χαρακτηρισμός ΡΑΕ 699/2012· επανεξέταση ΡΑΕ 231/2022",
+      "fek": "ΦΕΚ Β' 3660/2.10.2019 (για 663/2019)",
+      "date": "2019-10-02",
+      "status": "saturated (actively managed; Troizinia 150kV sub-area under reinforcement, est. H2 2025)",
+      "mw_margin": "≈126.07 MW available (Nov 2024): wind 15.05 / PV 8.17 / small-hydro 37.35 / biomass-biogas-geo-CHP 65.50",
+      "confidence": "high",
+      "source_url": "https://www.admie.gr/en/grid/user-connection/res-producers"
+    },
+    {
+      "zone_name_el": "Εύβοια",
+      "zone_name_en": "Evia (interconnected island)",
+      "region": "Περιφέρεια Στερεάς Ελλάδας",
+      "prefectures": ["Ευβοίας"],
+      "kyt": ["150 kV network of Evia", "ΚΥΤ Αλιβερίου"],
+      "decision": "ΡΑΕ 136/2006 & 96/2007 (χαρακτηρισμός)· περιθώρια ΡΑΕ 1253/2010, 1291/2011",
+      "fek": "not individually confirmed",
+      "date": "2006/2007 characterization; latest margin release 2025-08-11",
+      "status": "saturated (margin re-released Aug 2025)",
+      "mw_margin": "≈124 MW available (Aug 2025 joint ADMIE-DEDDIE announcement)",
+      "confidence": "high",
+      "source_url": "https://news.b2green.gr/62900/"
+    },
+    {
+      "zone_name_el": "Θράκη",
+      "zone_name_en": "Thrace",
+      "region": "Ανατολική Μακεδονία - Θράκη",
+      "prefectures": ["Έβρου", "Ξάνθης", "Ροδόπης"],
+      "kyt": ["150 kV networks of Thrace"],
+      "decision": "No Article-14 ΦΕΚ (confirmed 2026-07: none exists for this region). Basis: exhausted electrical space in ΑΔΜΗΕ ΔΠΑ 2025-2034 + ΔΕΔΔΗΕ κορεσμένα-δίκτυα map; managed via connection-offer freezes",
+      "fek": null, "date": null,
+      "status": "effectively saturated (transmission-constrained; no available space)",
+      "mw_margin": "0 / negative for new applications",
+      "confidence": "medium",
+      "source_url": "https://ecopress.gr/deddie-ta-koresmena-diktya-kai-pou-bo/"
+    },
+    {
+      "zone_name_el": "Δυτική Μακεδονία",
+      "zone_name_en": "Western Macedonia",
+      "region": "Δυτική Μακεδονία",
+      "prefectures": ["Κοζάνης", "Φλώρινας", "Γρεβενών", "Καστοριάς"],
+      "kyt": ["150 kV networks", "ΚΥΤ Αγίου Δημητρίου", "ΚΥΤ Καρδιάς", "ΚΥΤ Αμυνταίου", "ΚΥΤ Μελίτης"],
+      "decision": "No Article-14 ΦΕΚ (confirmed 2026-07: none exists for this region). Basis: exhausted electrical space in ΑΔΜΗΕ ΔΠΑ 2025-2034 + ΔΕΔΔΗΕ κορεσμένα-δίκτυα map; managed via connection-offer freezes",
+      "fek": null, "date": null,
+      "status": "effectively saturated",
+      "mw_margin": "0 available (DEDDIE map). NB: 2025 ΜΔΝ consultation cites ~630 MW POTENTIAL if saturation lifted (not released)",
+      "confidence": "medium",
+      "source_url": "https://ecopress.gr/deddie-ta-koresmena-diktya-kai-pou-bo/"
+    },
+    {
+      "zone_name_el": "Κεντρική Μακεδονία (τμήμα)",
+      "zone_name_en": "Central Macedonia (part)",
+      "region": "Κεντρική Μακεδονία",
+      "prefectures": ["Πέλλας", "Πιερίας"],
+      "kyt": ["150 kV"],
+      "decision": "No Article-14 ΦΕΚ (confirmed 2026-07: none exists for this region). Basis: exhausted electrical space in ΑΔΜΗΕ ΔΠΑ 2025-2034 + ΔΕΔΔΗΕ κορεσμένα-δίκτυα map; managed via connection-offer freezes",
+      "fek": null, "date": null,
+      "status": "effectively saturated",
+      "mw_margin": "0 available (DEDDIE map)",
+      "confidence": "medium",
+      "source_url": "https://ecopress.gr/deddie-ta-koresmena-diktya-kai-pou-bo/"
+    },
+    {
+      "zone_name_el": "Θεσσαλία",
+      "zone_name_en": "Thessaly",
+      "region": "Θεσσαλία",
+      "prefectures": ["Καρδίτσας", "Λάρισας", "Τρικάλων"],
+      "kyt": ["150 kV", "ΚΥΤ Λάρισας", "ΚΥΤ Τρικάλων"],
+      "decision": "No Article-14 ΦΕΚ (confirmed 2026-07: none exists for this region). Basis: exhausted electrical space in ΑΔΜΗΕ ΔΠΑ 2025-2034 + ΔΕΔΔΗΕ κορεσμένα-δίκτυα map; managed via connection-offer freezes",
+      "fek": null, "date": null,
+      "status": "effectively saturated",
+      "mw_margin": "0 available (DEDDIE map). NB: ΜΔΝ consultation cites ~605 MW potential",
+      "confidence": "medium",
+      "source_url": "https://ecopress.gr/deddie-ta-koresmena-diktya-kai-pou-bo/"
+    },
+    {
+      "zone_name_el": "Στερεά Ελλάδα",
+      "zone_name_en": "Central Greece (Sterea Ellada)",
+      "region": "Στερεά Ελλάδα",
+      "prefectures": ["Βοιωτίας", "Φθιώτιδας", "Ευρυτανίας"],
+      "kyt": ["150 kV", "ΚΥΤ Λάρυμνας", "ΚΥΤ Διστόμου"],
+      "decision": "No Article-14 ΦΕΚ (confirmed 2026-07: none exists for this region). Basis: exhausted electrical space in ΑΔΜΗΕ ΔΠΑ 2025-2034 + ΔΕΔΔΗΕ κορεσμένα-δίκτυα map; managed via connection-offer freezes",
+      "fek": null, "date": null,
+      "status": "effectively saturated",
+      "mw_margin": "0 available (DEDDIE map)",
+      "confidence": "medium",
+      "source_url": "https://ecopress.gr/deddie-ta-koresmena-diktya-kai-pou-bo/"
+    },
+    {
+      "zone_name_el": "Ήπειρος (τμήμα)",
+      "zone_name_en": "Epirus (part)",
+      "region": "Ήπειρος",
+      "prefectures": ["Ιωαννίνων"],
+      "kyt": ["150 kV", "ΚΥΤ Αράχθου"],
+      "decision": "No Article-14 ΦΕΚ (confirmed 2026-07: none exists for this region). Basis: exhausted electrical space in ΑΔΜΗΕ ΔΠΑ 2025-2034 + ΔΕΔΔΗΕ κορεσμένα-δίκτυα map",
+      "fek": null, "date": null,
+      "status": "effectively saturated",
+      "mw_margin": "0 available (DEDDIE map)",
+      "confidence": "low",
+      "source_url": "https://ecopress.gr/deddie-ta-koresmena-diktya-kai-pou-bo/"
+    },
+    {
+      "zone_name_el": "Δυτική Ελλάδα (τμήμα)",
+      "zone_name_en": "Western Greece (part)",
+      "region": "Δυτική Ελλάδα",
+      "prefectures": ["Αιτωλοακαρνανίας"],
+      "kyt": ["150 kV", "ΚΥΤ Αχελώου"],
+      "decision": "No Article-14 ΦΕΚ (confirmed 2026-07: none exists for this region). Basis: exhausted electrical space in ΑΔΜΗΕ ΔΠΑ 2025-2034 + ΔΕΔΔΗΕ κορεσμένα-δίκτυα map",
+      "fek": null, "date": null,
+      "status": "effectively saturated",
+      "mw_margin": "0 available (DEDDIE map)",
+      "confidence": "low",
+      "source_url": "https://ecopress.gr/deddie-ta-koresmena-diktya-kai-pou-bo/"
+    }
+  ]
+}
