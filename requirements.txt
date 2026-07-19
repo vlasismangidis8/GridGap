@@ -1,0 +1,13 @@
+requests
+urllib3
+pandas
+numpy
+geopandas
+shapely
+pyproj
+networkx
+rasterio
+matplotlib
+plotly
+folium
+playwright

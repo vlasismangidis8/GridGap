@@ -1,0 +1,27 @@
+# --- Outreach material: contains third-party personal data. DO NOT PUBLISH. ---
+send_emails.py
+rocketreach_lookup.py
+rocketreach_key.txt
+outreach_contacts.md
+outreach_targets.md
+data/outbox/
+data/rocketreach_emails.csv
+
+# --- Secrets / credentials ---
+.env
+*.key
+*app_password*
+
+# --- Raw & scraped data (regenerable; some large) ---
+data/raw/
+
+# --- Large generated outputs (regenerate with the make_*.py / *_fetch.py scripts) ---
+*.html
+GridGap_Greece.pdf
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.ipynb_checkpoints/
