@@ -1,0 +1,53 @@
+name: Daily DEDDIE fetch
+
+# DEDDIE publishes only the CURRENT margins and keeps no history anywhere.
+# Every day we miss is lost forever, so this runs on GitHub's servers rather
+# than a laptop that might be asleep at 07:30.
+on:
+  schedule:
+    # 04:30 UTC = 07:30 Athens in summer (EEST), 06:30 in winter (EET).
+    - cron: '30 4 * * *'
+    # Safety net: GitHub delays or silently drops scheduled runs under load.
+    # A second attempt is free and idempotent (same-day file is overwritten).
+    - cron: '30 13 * * *'
+  workflow_dispatch:
+
+# Never let the 13:30 net lap a still-running 04:30 job and race the push.
+concurrency:
+  group: daily-fetch
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Only what fetch.py imports. requirements.txt also carries geopandas,
+      # rasterio and playwright for the mapping scripts; installing those here
+      # would add minutes for no reason.
+      - run: pip install requests urllib3
+
+      - name: Fetch margins snapshot
+        run: python fetch.py
+
+      - name: Commit snapshot
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/
+          if git diff --cached --quiet; then
+            echo "No change (already archived today) — nothing to commit."
+            exit 0
+          fi
+          git commit -m "chore(data): archive DEDDIE margins $(date -u +%Y-%m-%d)"
+          # A human may have pushed since checkout; rebase rather than fail.
+          git pull --rebase --autostash origin main
+          git push origin main

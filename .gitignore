@@ -13,7 +13,11 @@ data/rocketreach_emails.csv
 *app_password*
 
 # --- Raw & scraped data (regenerable; some large) ---
-data/raw/
+data/raw/*
+# ...EXCEPT the daily margin snapshots. DEDDIE keeps no history: a day not
+# archived is lost forever, so these are the one thing here that is NOT
+# regenerable. ~170 KB/day, and they diff well. Track them.
+!data/raw/margins_20??-??-??.json
 
 # --- Large generated outputs (regenerate with the make_*.py / *_fetch.py scripts) ---
 *.html
