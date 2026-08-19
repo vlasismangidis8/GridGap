@@ -184,21 +184,23 @@ def main():
 
     # ---------- headline numbers ----------
     def usable_total(di):
-        """National usable MVA. A ΣΥΝΟΛΟ row is the combined figure for a pair of
-        transformers; it counts only where the members are not listed themselves,
-        which is how DEDDIE publishes them today (23 substations, sole row)."""
+        """National usable MVA across the whole published feed, including the few
+        substations that carry no coordinates and so are not drawn. A ΣΥΝΟΛΟ row is
+        the combined figure for a transformer pair; it counts only where the members
+        are not listed themselves, which is how DEDDIE publishes them today."""
+        rows = {}
+        for (sub, tx), h in hist.items():
+            rows.setdefault(sub, []).append((tx, h[di]))
         tot = 0.0
-        for s in subs:
-            has_members = any(not t["agg"] for t in s["tx"])
-            for t in s["tx"]:
-                if t["agg"] and has_members:
+        for sub, items in rows.items():
+            has_members = any("ΣΥΝΟΛΟ" not in tx for tx, _ in items)
+            for tx, e in items:
+                if "ΣΥΝΟΛΟ" in tx and has_members:
                     continue
-                e = t["h"][di]
-                if e and e[0] is not None and e[1] is not None:
-                    tot += min(e[0], e[1])
+                if e and e["t"] is not None and e["b"] is not None:
+                    tot += min(e["t"], e["b"])
         return round(tot, 1)
 
-    # sites that look entirely shut yet hold thermal headroom behind β/κ = 0
     locked_sites = [s for s in subs if s["s"][-1][3] > 0 and s["s"][-1][1] == "R"]
     stats = {
         "subs": len(subs), "tx": sum(len(s["tx"]) for s in subs),
