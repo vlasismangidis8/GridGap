@@ -493,6 +493,9 @@ el: {
   sec_filters:'Φίλτρα', sec_layers:'Επίπεδα χάρτη', sec_log:'Ημερολόγιο μεταβολών',
   m_space:'Διαθέσιμη ικανότητα',
   m_space_d:'Ικανότητα σύνδεσης ανά υποσταθμό σε MVA, όπως δημοσιεύεται από τον ΔΕΔΔΗΕ.',
+  m_why:'Γιατί είναι κλειστό',
+  m_why_d:'Οι πλήρως κλειστοί υποσταθμοί χωρισμένοι κατά αιτία: στάθμη βραχυκύκλωσης, '
+    +'θερμικό όριο, ή και τα δύο.',
   m_locked:'Περιορισμός βραχυκύκλωσης',
   m_locked_d:'Υποσταθμοί με μηδενικό δημοσιευμένο περιθώριο που διατηρούν θερμική ικανότητα· '
     +'δεσμευτικό είναι το όριο στάθμης βραχυκύκλωσης.',
@@ -566,6 +569,16 @@ el: {
   k_flips:'μεταβολές εικονιδίου', k_adj:'αναπροσαρμογές τιμών',
   k_moved:'υποσταθμοί με μεταβολή σε Μ/Σ', k_snaps:'στιγμιότυπα στο αρχείο',
   /* legend */
+  lg_why:'Αιτία φραγής', lg_why_ok:'Διαθέσιμο περιθώριο',
+  lg_why_sc:'Κλειστό μόνο λόγω βραχυκύκλωσης — η θερμική ικανότητα παραμένει',
+  lg_why_th:'Κλειστό μόνο λόγω θερμικού ορίου — απαιτείται νέος εξοπλισμός',
+  lg_why_both:'Κλειστό και από τους δύο περιορισμούς',
+  lg_why_f:'Η στάθμη βραχυκύκλωσης αντιμετωπίζεται με αντιδραστήρια, σχάση ζυγών ή '
+    +'διακόπτες μεγαλύτερης ικανότητας· το θερμικό όριο απαιτεί νέο μετασχηματιστή.',
+  h_why_cap:'πλήρως κλειστοί υποσταθμοί, από 229',
+  h_why_note:(n,mva)=>`Οι <b>${n}</b> κλείνουν αποκλειστικά λόγω στάθμης βραχυκύκλωσης, `
+    +`με <b>${mva} MVA</b> θερμικής ικανότητας να παραμένει αχρησιμοποίητη πίσω τους.`,
+  k_why_sc:'μόνο β/κ', k_why_th:'μόνο θερμικό', k_why_both:'και τα δύο', k_why_ok:'διαθέσιμοι',
   lg_space:'Διαθέσιμο περιθώριο', lg_space_g:'≥ 1,4 MVA: επιτρέπεται σύνδεση',
   lg_space_o:'οριακό (< 1,4 MVA)', lg_space_r:'μηδενικό περιθώριο',
   lg_space_f:'Χρώμα και μέγεθος από τον μετασχηματιστή με το μεγαλύτερο περιθώριο, δηλαδή το '
@@ -619,6 +632,8 @@ en: {
   sec_filters:'Filters', sec_layers:'Map layers', sec_log:'Change log',
   m_space:'Available capacity',
   m_space_d:'Connection capacity per substation in MVA, as published by HEDNO (ΔΕΔΔΗΕ).',
+  m_why:'Why it is closed',
+  m_why_d:'Fully closed substations split by cause: fault level, thermal limit, or both.',
   m_locked:'Short-circuit constraint',
   m_locked_d:'Substations with zero published margin that still retain thermal capacity; the '
     +'binding limit is the fault level.',
@@ -689,6 +704,16 @@ en: {
     but in the timely identification of the rare capacity-release events.`,
   k_flips:'icon changes', k_adj:'value readjustments',
   k_moved:'substations with a transformer change', k_snaps:'snapshots in the archive',
+  lg_why:'Cause of the block', lg_why_ok:'Margin available',
+  lg_why_sc:'Closed by fault level alone — the thermal capacity is still there',
+  lg_why_th:'Closed by the thermal limit alone — needs new plant',
+  lg_why_both:'Closed by both constraints',
+  lg_why_f:'A fault-level limit is met with reactors, busbar splitting or higher-rated '
+    +'breakers; a thermal limit needs a new transformer.',
+  h_why_cap:'fully closed substations, of 229',
+  h_why_note:(n,mva)=>`<b>${n}</b> of them are closed by fault level alone, with `
+    +`<b>${mva} MVA</b> of thermal capacity sitting unused behind them.`,
+  k_why_sc:'fault level only', k_why_th:'thermal only', k_why_both:'both', k_why_ok:'available',
   lg_space:'Available margin', lg_space_g:'≥ 1.4 MVA: connection permitted',
   lg_space_o:'marginal (< 1.4 MVA)', lg_space_r:'zero margin',
   lg_space_f:'Colour and size follow the transformer with the largest margin, that is, the '
@@ -739,15 +764,43 @@ const fmt = v => v == null ? t('na')
 const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
   .replace(/ς/g,'σ');
 
-const MODES = ['space','locked','hidden','change'];
+const MODES = ['space','why','locked','hidden','change'];
+const WHY = {ok:'#2e9e5b', sc:'#a97bf0', th:'#d23b3b', both:'#8a3324'};
+
+// Why is this substation closed? A blank margin is "not published", so it never
+// blocks; a substation is closed only when no transformer has any usable margin.
+function why(s, di){
+  let anyUsable = false, blockedBySc = 0, blockedByTh = 0, live = 0;
+  s.tx.forEach(x => {
+    const e = x.h[di];
+    if(!e) return;
+    const th = e[0], sc = e[1];
+    if(th === null && sc === null) return;
+    live++;
+    const m = Math.min(...[th, sc].filter(v => v !== null));
+    if(m > 0){ anyUsable = true; return; }
+    if(sc === 0 && th !== null && th > 0) blockedBySc++;
+    else if(th === 0 && sc !== null && sc > 0) blockedByTh++;
+    else { blockedBySc++; blockedByTh++; }        // both exhausted
+  });
+  if(!live) return null;
+  if(anyUsable) return 'ok';
+  if(blockedBySc && !blockedByTh) return 'sc';
+  if(blockedByTh && !blockedBySc) return 'th';
+  return 'both';
+}
 
 const map = L.map('map', {zoomControl:false, preferCanvas:true}).setView([38.4, 24.2], 7);
 L.control.zoom({position:'topright'}).addTo(map);
-const TA = '© OpenStreetMap, © CARTO';
-const dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  {attribution:TA, maxZoom:19}).addTo(map);
-const light = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  {attribution:TA, maxZoom:19});
+// CARTO's basemaps started demanding an API key and render a watermark without
+// one, so the tiles come from Esri's open canvas services instead: no key, same
+// muted grey styling, and a dark and light pair to match the page theme.
+const TA = '© OpenStreetMap contributors, © Esri';
+const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
+const dark = L.tileLayer(ESRI + 'World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  {attribution:TA, maxZoom:16}).addTo(map);
+const light = L.tileLayer(ESRI + 'World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  {attribution:TA, maxZoom:16});
 const zoneLayer = L.geoJSON(D.zones, {
   style: f => ({color:CONF[f.properties.conf], fillColor:CONF[f.properties.conf],
                 weight:1, fillOpacity:.15}),
@@ -837,7 +890,13 @@ function draw(){
     const first = s.s[0][0], delta = (first!=null && mv!=null) ? mv-first : 0;
     let star = false, color = C[ic], r = R(mv||0, 1.0), w = 1, stroke = color;
 
-    if(mode === 'locked'){
+    if(mode === 'why'){
+      const w = why(s, di);
+      star = w !== null && w !== 'ok';
+      color = WHY[w || 'ok']; stroke = color;
+      r = star ? R(Math.max(locked, 6), 1.0) : 4;
+      if(!star){ color = WHY.ok; stroke = color; }
+    } else if(mode === 'locked'){
       star = locked > 0;
       if(star){ color = LOCK; stroke = '#c9aaff'; r = R(locked, 1.0); }
     } else if(mode === 'hidden'){
@@ -851,7 +910,9 @@ function draw(){
 
     const m = L.circleMarker([s.la, s.lo], star
       ? {radius:r, color:stroke, fillColor:color, fillOpacity:.85, weight:w}
-      : {radius:2.5, color:'#37414f', fillColor:'#2a323d', fillOpacity:.55, weight:0});
+      : mode === 'why'
+        ? {radius:3.5, color:WHY.ok, fillColor:WHY.ok, fillOpacity:.5, weight:0}
+        : {radius:2.5, color:'#37414f', fillColor:'#2a323d', fillOpacity:.55, weight:0});
     m.bindPopup(() => popup(s), {maxWidth:520, minWidth:330});
     m.bindTooltip(() => `<b>${s.n}</b>: ${fmt(mv)} MVA`
       + (locked>0 ? ` · ${t('tt_locked', fmt(locked))}` : ''),
@@ -885,7 +946,20 @@ function readout(){
 
   const H = document.getElementById('hbig'), Cp = document.getElementById('hcap'),
         N = document.getElementById('hnote'), K = document.getElementById('kpis');
-  if(mode === 'locked'){
+  if(mode === 'why'){
+    const c = {ok:0, sc:0, th:0, both:0}; let scMva = 0;
+    D.subs.forEach(s => {
+      const w = why(s, di);
+      if(!w) return;
+      c[w]++;
+      if(w === 'sc') scMva += s.s[di][3];
+    });
+    H.innerHTML = `${c.sc + c.th + c.both}`;
+    Cp.textContent = t('h_why_cap');
+    N.innerHTML = t('h_why_note', c.sc, fmt(scMva));
+    K.innerHTML = kpi(c.sc, t('k_why_sc')) + kpi(c.th, t('k_why_th'))
+      + kpi(c.both, t('k_why_both')) + kpi(c.ok, t('k_why_ok'));
+  } else if(mode === 'locked'){
     H.innerHTML = MVA(fmt(locked));
     Cp.textContent = t('h_locked_cap', lsites);
     N.innerHTML = t('h_locked_note', fmt(shut), ssites);
@@ -925,7 +999,12 @@ function legend(){
   const li = (sw,txt) => `<div class="li">${sw}<span>${txt}</span></div>`;
   const d = c => `<span class="dot" style="background:${c}"></span>`;
   const rest = li('<span class="dot" style="background:#2a323d"></span>', t('lg_rest'));
-  if(mode === 'locked'){
+  if(mode === 'why'){
+    T.textContent = t('lg_why');
+    B.innerHTML = li(d(WHY.sc), t('lg_why_sc')) + li(d(WHY.th), t('lg_why_th'))
+      + li(d(WHY.both), t('lg_why_both')) + li(d(WHY.ok), t('lg_why_ok'));
+    Fo.textContent = t('lg_why_f');
+  } else if(mode === 'locked'){
     T.textContent = t('lg_lock');
     B.innerHTML = li(d(LOCK), t('lg_lock_1')) + rest;
     Fo.textContent = t('lg_lock_f');
