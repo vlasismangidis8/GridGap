@@ -570,8 +570,8 @@ el: {
   k_moved:'υποσταθμοί με μεταβολή σε Μ/Σ', k_snaps:'στιγμιότυπα στο αρχείο',
   /* legend */
   lg_why:'Αιτία φραγής', lg_why_ok:'Διαθέσιμο περιθώριο',
-  lg_why_sc:'Κλειστό μόνο λόγω βραχυκύκλωσης — η θερμική ικανότητα παραμένει',
-  lg_why_th:'Κλειστό μόνο λόγω θερμικού ορίου — απαιτείται νέος εξοπλισμός',
+  lg_why_sc:'Κλειστό μόνο λόγω βραχυκύκλωσης: η θερμική ικανότητα παραμένει',
+  lg_why_th:'Κλειστό μόνο λόγω θερμικού ορίου: απαιτείται νέος εξοπλισμός',
   lg_why_both:'Κλειστό και από τους δύο περιορισμούς',
   lg_why_f:'Η στάθμη βραχυκύκλωσης αντιμετωπίζεται με αντιδραστήρια, σχάση ζυγών ή '
     +'διακόπτες μεγαλύτερης ικανότητας· το θερμικό όριο απαιτεί νέο μετασχηματιστή.',
@@ -705,8 +705,8 @@ en: {
   k_flips:'icon changes', k_adj:'value readjustments',
   k_moved:'substations with a transformer change', k_snaps:'snapshots in the archive',
   lg_why:'Cause of the block', lg_why_ok:'Margin available',
-  lg_why_sc:'Closed by fault level alone — the thermal capacity is still there',
-  lg_why_th:'Closed by the thermal limit alone — needs new plant',
+  lg_why_sc:'Closed by fault level alone: the thermal capacity is still there',
+  lg_why_th:'Closed by the thermal limit alone: needs new plant',
   lg_why_both:'Closed by both constraints',
   lg_why_f:'A fault-level limit is met with reactors, busbar splitting or higher-rated '
     +'breakers; a thermal limit needs a new transformer.',
