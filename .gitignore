@@ -22,6 +22,12 @@ data/raw/*
 # --- Large generated outputs (regenerate with the make_*.py / *_fetch.py scripts) ---
 *.html
 GridGap_Greece.pdf
+# ...EXCEPT the presentation, which is authored by hand and not regenerable.
+# make_deck_maps.py only injects its SVG maps between markers in this file.
+!gridgap_presentation.html
+
+# Change reports are derived from the archive; regenerate with detect_changes.py.
+data/changes/
 
 # --- Python ---
 __pycache__/
