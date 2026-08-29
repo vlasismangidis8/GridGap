@@ -84,10 +84,13 @@ def snapshot(entries):
     """
     best, icon, nred, locked = None, "?", 0, 0.0
     for e in entries:
-        if not e or e[0] is None or e[1] is None:
+        if not e or (e[0] is None and e[1] is None):
             continue
         t, b, ic = e[0], e[1], (e[2] or "?")
-        m = min(t, b)
+        # A blank margin is "not published", not "zero": 11 transformers ship a
+        # blank short-circuit field while the icon says Green, so the published
+        # margin is whatever DEDDIE does give. Same convention as validate.py.
+        m = min(x for x in (t, b) if x is not None)
         if best is None or m > best:
             best, icon = m, ic
         if ic == "R":
@@ -185,20 +188,29 @@ def main():
     # ---------- headline numbers ----------
     def usable_total(di):
         """National usable MVA across the whole published feed, including the few
-        substations that carry no coordinates and so are not drawn. A ΣΥΝΟΛΟ row is
-        the combined figure for a transformer pair; it counts only where the members
-        are not listed themselves, which is how DEDDIE publishes them today."""
+        substations that carry no coordinates and so are not drawn.
+
+        A ΣΥΝΟΛΟ row gives the combined figure for a named transformer pair, e.g.
+        "ΣΥΝΟΛΟ  Ρέθυμνο ΜΣ2-Ρέθυμνο ΜΣ1". Skipping it whenever the substation also
+        lists some other transformer was wrong: those four sites publish a ΜΣ3,
+        which is not a member of the pair, so 74 MVA of real capacity was dropped.
+        Skip an aggregate only when the transformers it names are themselves
+        published — which today never happens, but would be double counting if it did."""
         rows = {}
         for (sub, tx), h in hist.items():
-            rows.setdefault(sub, []).append((tx, h[di]))
+            rows.setdefault(sub, []).append((tx.strip(), h[di]))
         tot = 0.0
         for sub, items in rows.items():
-            has_members = any("ΣΥΝΟΛΟ" not in tx for tx, _ in items)
+            names = {tx for tx, _ in items}
             for tx, e in items:
-                if "ΣΥΝΟΛΟ" in tx and has_members:
-                    continue
-                if e and e["t"] is not None and e["b"] is not None:
-                    tot += min(e["t"], e["b"])
+                if "ΣΥΝΟΛΟ" in tx:
+                    members = [m.strip() for m in tx.replace("ΣΥΝΟΛΟ", "", 1).split("-")]
+                    if any(m in names for m in members):
+                        continue
+                if e:
+                    present = [x for x in (e["t"], e["b"]) if x is not None]
+                    if present:
+                        tot += min(present)   # a blank margin does not block
         return round(tot, 1)
 
     locked_sites = [s for s in subs if s["s"][-1][3] > 0 and s["s"][-1][1] == "R"]
