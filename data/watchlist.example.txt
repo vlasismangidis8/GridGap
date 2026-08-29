@@ -1,0 +1,12 @@
+# GridGap watchlist — one substation (or transformer) name per line.
+# Accents and case are ignored, and a partial name matches, so "ΛΑΡΙΣΑ"
+# flags every Larisa transformer while "Λάρισα IV ΜΣ2" flags just the one.
+# Lines starting with # are ignored.
+#
+# This is the file a developer hands over for the pilot: their own sites.
+
+ΛΑΡΙΣΑ IV
+ΑΡΑΧΘΟΥ
+ΛΥΓΟΥΡΙΟΥ
+ΚΕΡΚΥΡΑ
+ΗΡΑΚΛΕΙΟ

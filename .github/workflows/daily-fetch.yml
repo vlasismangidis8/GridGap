@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write   # the change report is filed as an issue, which emails us
 
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +38,25 @@ jobs:
 
       - name: Fetch margins snapshot
         run: python fetch.py
+
+      # Runs before the commit, so it compares today's fresh pull against the
+      # last archived day. DEDDIE announces none of this; the diff is the only
+      # way to learn that something opened or closed.
+      - name: Detect what moved since the last snapshot
+        id: detect
+        run: python detect_changes.py --out /tmp/report.md
+
+      # An issue lands in email and stays searchable, which is what a "the day
+      # it happens" alert has to do. Only fires on icon flips, additions,
+      # removals or watchlist hits — never on rounding drift.
+      - name: File the change report
+        if: steps.detect.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "GridGap · μεταβολές δικτύου $(date -u +%Y-%m-%d) (${{ steps.detect.outputs.flips }} αλλαγές κατάστασης)" \
+            --body-file /tmp/report.md
 
       - name: Commit snapshot
         run: |
