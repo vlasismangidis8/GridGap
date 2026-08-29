@@ -53,6 +53,16 @@ def pref_stem(name):
     return n
 
 
+def numeric(s):
+    """A DEDDIE cell -> float, or None when the field is blank (= not published)."""
+    if s in (None, ""):
+        return None
+    try:
+        return float(str(s).replace(",", "."))
+    except ValueError:
+        return None
+
+
 def path_d(geom, min_area=0.0012, tol=0.012):
     """Polygon exteriors -> one SVG path string, small islands dropped."""
     g = geom.simplify(tol, preserve_topology=True)
@@ -95,6 +105,19 @@ def main():
 
     # --- substations ----------------------------------------------------------
     URBAN = ("Τομέα Αθηνών", "Πειραιώς", "Μητροπολιτική Ενότητα Θεσσαλονίκης")
+
+    # A site counts as available when AT LEAST ONE of its transformers is green:
+    # a connection is made on one transformer, so one green Μ/Σ is a way in. The
+    # margin shown is that transformer's, i.e. the best on site.
+    best = {}
+    green = {}
+    for r in json.loads((RAW / "margins_2026-08-29.json").read_text(encoding="utf-8")):
+        sub = r["PERI_Y"]
+        vals = [v for v in (numeric(r["TTHP"]), numeric(r["TPBK"])) if v is not None]
+        if vals:
+            best[sub] = max(best.get(sub, 0.0), min(vals))
+        green[sub] = green.get(sub, False) or r["MARGIN_ICON"] == "Green"
+
     dots = []
     for f in subs["features"]:
         p = f["properties"]
@@ -102,14 +125,17 @@ def main():
             continue
         lon, lat = f["geometry"]["coordinates"]
         x, y = px(lon, lat)
+        name = p["substation"]
         icons = p["deddie_icons"]
-        icon = "Green" if icons == ["Green"] else ("Red" if "Red" in icons else "Orange")
+        icon = "Green" if green.get(name) else ("Red" if "Red" in icons else "Orange")
         urban = any(u in (p.get("prefecture") or "") for u in URBAN)
+        available = bool(green.get(name))
+        trapped = available and bool(p.get("admie_zone"))
         dots.append(dict(x=round(x, 1), y=round(y, 1), icon=icon,
-                         trap=bool(p["hidden_red"]),
-                         urban=icons == ["Green"] and not p["hidden_red"] and urban,
-                         build=icons == ["Green"] and not p["hidden_red"] and not urban,
-                         mva=p["min_margin_mva"] or 0))
+                         trap=trapped,
+                         urban=available and not trapped and urban,
+                         build=available and not trapped and not urban,
+                         mva=best.get(name, 0.0)))
 
     C = {"Green": "var(--green)", "Orange": "var(--amber)", "Red": "var(--red)"}
 

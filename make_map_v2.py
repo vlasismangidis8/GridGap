@@ -493,6 +493,9 @@ el: {
   sec_filters:'Φίλτρα', sec_layers:'Επίπεδα χάρτη', sec_log:'Ημερολόγιο μεταβολών',
   m_space:'Διαθέσιμη ικανότητα',
   m_space_d:'Ικανότητα σύνδεσης ανά υποσταθμό σε MVA, όπως δημοσιεύεται από τον ΔΕΔΔΗΕ.',
+  m_use:'Παραγωγή ή αποθήκευση',
+  m_use_d:'Οι διαθέσιμοι υποσταθμοί χωρισμένοι σε αγροτικούς, όπου χωράει σταθμός παραγωγής, '
+    +'και αστικούς, όπου υπάρχει ρεύμα αλλά όχι έκταση.',
   m_why:'Γιατί είναι κλειστό',
   m_why_d:'Οι πλήρως κλειστοί υποσταθμοί χωρισμένοι κατά αιτία: στάθμη βραχυκύκλωσης, '
     +'θερμικό όριο, ή και τα δύο.',
@@ -569,12 +572,21 @@ el: {
   k_flips:'μεταβολές εικονιδίου', k_adj:'αναπροσαρμογές τιμών',
   k_moved:'υποσταθμοί με μεταβολή σε Μ/Σ', k_snaps:'στιγμιότυπα στο αρχείο',
   /* legend */
+  lg_use:'Τι χωράει', lg_use_gen:'Αγροτικός ή νησιωτικός: θέση για σταθμό παραγωγής',
+  lg_use_bess:'Αστικός πυρήνας: χωρίς έκταση για πάρκο, κατάλληλος για αποθήκευση',
+  lg_use_f:'Ο αστικός χαρακτηρισμός προκύπτει από τα διοικητικά όρια: Τομείς Αθηνών, Πειραιάς '
+    +'και μητροπολιτική Θεσσαλονίκη.',
+  h_use_cap:'διαθέσιμοι υποσταθμοί εκτός αστικού ιστού',
+  k_use_gen:'για παραγωγή', k_use_bess:'για αποθήκευση',
+  k_use_genmva:'MVA αγροτικά', k_use_bessmva:'MVA αστικά',
   lg_why:'Αιτία φραγής', lg_why_ok:'Διαθέσιμο περιθώριο',
   lg_why_sc:'Κλειστό μόνο λόγω βραχυκύκλωσης: η θερμική ικανότητα παραμένει',
   lg_why_th:'Κλειστό μόνο λόγω θερμικού ορίου: απαιτείται νέος εξοπλισμός',
   lg_why_both:'Κλειστό και από τους δύο περιορισμούς',
   lg_why_f:'Η στάθμη βραχυκύκλωσης αντιμετωπίζεται με αντιδραστήρια, σχάση ζυγών ή '
     +'διακόπτες μεγαλύτερης ικανότητας· το θερμικό όριο απαιτεί νέο μετασχηματιστή.',
+  h_use_note:(n,mva)=>`Οι <b>${n}</b> αστικοί υποσταθμοί συγκεντρώνουν <b>${mva} MVA</b>: `
+    +`ηλεκτρικά από τα καλύτερα σημεία της χώρας, χωρίς όμως διαθέσιμη έκταση για σταθμό.`,
   h_why_cap:'πλήρως κλειστοί υποσταθμοί, από 229',
   h_why_note:(n,mva)=>`Οι <b>${n}</b> κλείνουν αποκλειστικά λόγω στάθμης βραχυκύκλωσης, `
     +`με <b>${mva} MVA</b> θερμικής ικανότητας να παραμένει αχρησιμοποίητη πίσω τους.`,
@@ -632,6 +644,9 @@ en: {
   sec_filters:'Filters', sec_layers:'Map layers', sec_log:'Change log',
   m_space:'Available capacity',
   m_space_d:'Connection capacity per substation in MVA, as published by HEDNO (ΔΕΔΔΗΕ).',
+  m_use:'Generation or storage',
+  m_use_d:'Available substations split into rural, where a plant fits, and urban, where the '
+    +'capacity is there but the land is not.',
   m_why:'Why it is closed',
   m_why_d:'Fully closed substations split by cause: fault level, thermal limit, or both.',
   m_locked:'Short-circuit constraint',
@@ -704,12 +719,21 @@ en: {
     but in the timely identification of the rare capacity-release events.`,
   k_flips:'icon changes', k_adj:'value readjustments',
   k_moved:'substations with a transformer change', k_snaps:'snapshots in the archive',
+  lg_use:'What fits', lg_use_gen:'Rural or island: room for a generation plant',
+  lg_use_bess:'Urban core: no land for a park, suited to storage',
+  lg_use_f:'The urban flag comes from administrative boundaries: the Athens sectors, Piraeus '
+    +'and metropolitan Thessaloniki.',
+  h_use_cap:'available substations outside the urban fabric',
+  k_use_gen:'for generation', k_use_bess:'for storage',
+  k_use_genmva:'MVA rural', k_use_bessmva:'MVA urban',
   lg_why:'Cause of the block', lg_why_ok:'Margin available',
   lg_why_sc:'Closed by fault level alone: the thermal capacity is still there',
   lg_why_th:'Closed by the thermal limit alone: needs new plant',
   lg_why_both:'Closed by both constraints',
   lg_why_f:'A fault-level limit is met with reactors, busbar splitting or higher-rated '
     +'breakers; a thermal limit needs a new transformer.',
+  h_use_note:(n,mva)=>`The <b>${n}</b> urban substations hold <b>${mva} MVA</b>: `
+    +`electrically among the best sites in the country, with no land for a plant.`,
   h_why_cap:'fully closed substations, of 229',
   h_why_note:(n,mva)=>`<b>${n}</b> of them are closed by fault level alone, with `
     +`<b>${mva} MVA</b> of thermal capacity sitting unused behind them.`,
@@ -764,8 +788,22 @@ const fmt = v => v == null ? t('na')
 const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
   .replace(/ς/g,'σ');
 
-const MODES = ['space','why','locked','hidden','change'];
+const MODES = ['space','use','why','locked','hidden','change'];
 const WHY = {ok:'#2e9e5b', sc:'#a97bf0', th:'#d23b3b', both:'#8a3324'};
+const USE = {gen:'#2e9e5b', bess:'#39b7c9'};   // a park needs land, a battery does not
+
+// The shortlist definition, matching the deck: EVERY transformer on the site is
+// green and the site is outside an ADMIE-saturated zone. Stricter than the
+// headline icon, which reports the best transformer, and the stricter one is what
+// a developer can rely on when a site has to be worked as a whole.
+const buildable = (s, di) => {
+  if(s.z) return false;                       // inside a saturated transmission zone
+  return s.tx.some(x => { const e = x.h[di]; return e && e[2] === 'G'; });
+};
+// A site is a misleading one when it has a way in on paper - at least one green
+// transformer - while sitting in a saturated zone.
+const misleading = (s, di) =>
+  !!s.z && s.tx.some(x => { const e = x.h[di]; return e && e[2] === 'G'; });
 
 // Why is this substation closed? A blank margin is "not published", so it never
 // blocks; a substation is closed only when no transformer has any usable margin.
@@ -890,7 +928,10 @@ function draw(){
     const first = s.s[0][0], delta = (first!=null && mv!=null) ? mv-first : 0;
     let star = false, color = C[ic], r = R(mv||0, 1.0), w = 1, stroke = color;
 
-    if(mode === 'why'){
+    if(mode === 'use'){
+      star = buildable(s, di);
+      if(star){ color = s.urb ? USE.bess : USE.gen; stroke = color; r = R(mv||0, 1.0); }
+    } else if(mode === 'why'){
       const w = why(s, di);
       star = w !== null && w !== 'ok';
       color = WHY[w || 'ok']; stroke = color;
@@ -900,7 +941,7 @@ function draw(){
       star = locked > 0;
       if(star){ color = LOCK; stroke = '#c9aaff'; r = R(locked, 1.0); }
     } else if(mode === 'hidden'){
-      star = s.hr;
+      star = misleading(s, di);
       if(star){ color = C.G; stroke = s.zc==='high' ? '#ff5c4d' : '#e0894a'; w = 2.5; }
     } else if(mode === 'change'){
       star = changedSubs.has(s.n) && Math.abs(delta) > .05;
@@ -946,7 +987,19 @@ function readout(){
 
   const H = document.getElementById('hbig'), Cp = document.getElementById('hcap'),
         N = document.getElementById('hnote'), K = document.getElementById('kpis');
-  if(mode === 'why'){
+  if(mode === 'use'){
+    let gen = 0, bess = 0, genMva = 0, bessMva = 0;
+    D.subs.forEach(s => {
+      if(!buildable(s, di)) return;
+      const v = s.s[di][0] || 0;
+      if(s.urb){ bess++; bessMva += v; } else { gen++; genMva += v; }
+    });
+    H.innerHTML = `${gen}`;
+    Cp.textContent = t('h_use_cap');
+    N.innerHTML = t('h_use_note', bess, fmt(bessMva));
+    K.innerHTML = kpi(gen, t('k_use_gen')) + kpi(bess, t('k_use_bess'))
+      + kpi(fmt(genMva), t('k_use_genmva')) + kpi(fmt(bessMva), t('k_use_bessmva'));
+  } else if(mode === 'why'){
     const c = {ok:0, sc:0, th:0, both:0}; let scMva = 0;
     D.subs.forEach(s => {
       const w = why(s, di);
@@ -966,11 +1019,17 @@ function readout(){
     K.innerHTML = kpi(lsites, t('k_locksites')) + kpi(ssites, t('k_shutsites'))
       + kpi(fmt(shut), t('k_shutmva')) + kpi(fmt(locked/Math.max(lsites,1)), t('k_avg'));
   } else if(mode === 'hidden'){
-    H.innerHTML = t('h_hidden_big', S.hidden);
+    let n = 0, fek = 0, mva = 0;
+    D.subs.forEach(s => {
+      if(!misleading(s, di)) return;
+      n++; mva += s.s[di][0] || 0;
+      if(s.zc === 'high') fek++;
+    });
+    H.innerHTML = t('h_hidden_big', n);
     Cp.textContent = t('h_hidden_cap');
-    N.innerHTML = t('h_hidden_note', fmt(S.hidden_mva), S.hidden_high);
-    K.innerHTML = kpi(S.hidden_high, t('k_fek')) + kpi(S.hidden - S.hidden_high, t('k_oper'))
-      + kpi(fmt(S.hidden_mva), t('k_hidmva')) + kpi(D.zones.features.length, t('k_prefs'));
+    N.innerHTML = t('h_hidden_note', fmt(mva), fek);
+    K.innerHTML = kpi(fek, t('k_fek')) + kpi(n - fek, t('k_oper'))
+      + kpi(fmt(mva), t('k_hidmva')) + kpi(D.zones.features.length, t('k_prefs'));
   } else if(mode === 'change'){
     H.innerHTML = t('h_change_big',
       `${S.nat_delta > 0 ? '+' : ''}${fmt(S.nat_delta)}`, D.dates.length);
@@ -999,7 +1058,11 @@ function legend(){
   const li = (sw,txt) => `<div class="li">${sw}<span>${txt}</span></div>`;
   const d = c => `<span class="dot" style="background:${c}"></span>`;
   const rest = li('<span class="dot" style="background:#2a323d"></span>', t('lg_rest'));
-  if(mode === 'why'){
+  if(mode === 'use'){
+    T.textContent = t('lg_use');
+    B.innerHTML = li(d(USE.gen), t('lg_use_gen')) + li(d(USE.bess), t('lg_use_bess')) + rest;
+    Fo.textContent = t('lg_use_f');
+  } else if(mode === 'why'){
     T.textContent = t('lg_why');
     B.innerHTML = li(d(WHY.sc), t('lg_why_sc')) + li(d(WHY.th), t('lg_why_th'))
       + li(d(WHY.both), t('lg_why_both')) + li(d(WHY.ok), t('lg_why_ok'));
