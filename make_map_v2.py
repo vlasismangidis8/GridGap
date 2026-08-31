@@ -617,7 +617,7 @@ el: {
   p_hid:(z,c)=>`<b>Μη ορατός κορεσμός.</b> Ο ΔΕΔΔΗΕ δημοσιεύει διαθέσιμο περιθώριο, ωστόσο ο
     υποσταθμός εντάσσεται σε κορεσμένη ζώνη ΑΔΜΗΕ: <b>${z}</b> (τεκμηρίωση: ${c})`,
   p_zone:(z,c)=>`Ζώνη ΑΔΜΗΕ: ${z} (${c})`,
-  p_slope:v=>`μέση κλίση ${v}°`, p_urban:'αστικός', p_agg:'συνδυασμένο', p_fed:'τροφοδοτείται από',
+  p_slope:v=>`μέση κλίση ${v}°`, p_urban:'αστικός', p_agg:'συνδυασμένο', p_fed:'συνδέεται μέσω',
   th_tx:'Μετασχηματιστής', th_mva:'MVA', th_res:'ΑΠΕ', th_th:'θερμ.', th_sc:'β/κ',
   th_av:'διαθ.', th_bind:'δεσμεύει', th_hist:'ιστορικό',
   bind_sc:'β/κ', bind_th:'θερμ.',
@@ -763,7 +763,7 @@ en: {
   p_hid:(z,c)=>`<b>Non-visible saturation.</b> HEDNO publishes an available margin, yet the
     substation lies within a saturated IPTO zone: <b>${z}</b> (evidence: ${c})`,
   p_zone:(z,c)=>`IPTO zone: ${z} (${c})`,
-  p_slope:v=>`mean slope ${v}°`, p_urban:'urban', p_agg:'combined', p_fed:'fed by',
+  p_slope:v=>`mean slope ${v}°`, p_urban:'urban', p_agg:'combined', p_fed:'connects via',
   th_tx:'Transformer', th_mva:'MVA', th_res:'RES', th_th:'thermal', th_sc:'s/c',
   th_av:'avail.', th_bind:'binds', th_hist:'history',
   bind_sc:'s/c', bind_th:'thermal',
