@@ -54,7 +54,11 @@ def pref_stem(name):
     n = n.strip()
     for suf in ("ιας", "ιου", "ων", "ας", "ης", "ος", "ου", "α", "ο", "ς", "η", "υ"):
         if n.endswith(suf) and len(n) - len(suf) >= 4:
-            return n[: -len(suf)]
+            n = n[: -len(suf)]
+            break
+    # zone lists use the nominative ('Κορινθία'), OSM the genitive ('Κορινθίας')
+    if n.endswith("ι") and len(n) >= 6:
+        n = n[:-1]
     return n
 
 
@@ -579,6 +583,9 @@ el: {
   h_use_cap:'διαθέσιμοι υποσταθμοί εκτός αστικού ιστού',
   k_use_gen:'για παραγωγή', k_use_bess:'για αποθήκευση',
   k_use_genmva:'MVA αγροτικά', k_use_bessmva:'MVA αστικά',
+  lg_zones:'Ζώνες κορεσμού μεταφοράς', lg_z_hi:'Επίσημη απόφαση με ΦΕΚ',
+  lg_z_med:'Ενδεικτική: ΔΠΑ ΑΔΜΗΕ και χάρτης κορεσμένων ΔΕΔΔΗΕ',
+  lg_z_low:'Ενδεικτική, ασθενέστερη τεκμηρίωση',
   lg_why:'Αιτία φραγής', lg_why_ok:'Διαθέσιμο περιθώριο',
   lg_why_sc:'Κλειστό μόνο λόγω βραχυκύκλωσης: η θερμική ικανότητα παραμένει',
   lg_why_th:'Κλειστό μόνο λόγω θερμικού ορίου: απαιτείται νέος εξοπλισμός',
@@ -726,6 +733,9 @@ en: {
   h_use_cap:'available substations outside the urban fabric',
   k_use_gen:'for generation', k_use_bess:'for storage',
   k_use_genmva:'MVA rural', k_use_bessmva:'MVA urban',
+  lg_zones:'Transmission saturation zones', lg_z_hi:'Formal decision, published in ΦΕΚ',
+  lg_z_med:'Indicative: ΑΔΜΗΕ ΔΠΑ and the ΔΕΔΔΗΕ saturated-network map',
+  lg_z_low:'Indicative, weaker evidence',
   lg_why:'Cause of the block', lg_why_ok:'Margin available',
   lg_why_sc:'Closed by fault level alone: the thermal capacity is still there',
   lg_why_th:'Closed by the thermal limit alone: needs new plant',
@@ -1056,35 +1066,43 @@ function legend(){
   const T = document.getElementById('legtitle'), B = document.getElementById('legbody'),
         Fo = document.getElementById('legfoot');
   const li = (sw,txt) => `<div class="li">${sw}<span>${txt}</span></div>`;
+  // The shaded polygons carry their own meaning, in every mode: how well the
+  // saturation of that area is documented.
+  const zoneKey = () => `<div class="li" style="margin-top:9px;padding-top:9px;`
+    + `border-top:1px solid var(--line);color:var(--faint);font-size:10.5px;`
+    + `letter-spacing:.08em">${t('lg_zones')}</div>`
+    + li(`<span class="dot" style="background:${CONF.high};border-radius:3px"></span>`, t('lg_z_hi'))
+    + li(`<span class="dot" style="background:${CONF.medium};border-radius:3px"></span>`, t('lg_z_med'))
+    + li(`<span class="dot" style="background:${CONF.low};border-radius:3px"></span>`, t('lg_z_low'));
   const d = c => `<span class="dot" style="background:${c}"></span>`;
   const rest = li('<span class="dot" style="background:#2a323d"></span>', t('lg_rest'));
   if(mode === 'use'){
     T.textContent = t('lg_use');
-    B.innerHTML = li(d(USE.gen), t('lg_use_gen')) + li(d(USE.bess), t('lg_use_bess')) + rest;
+    B.innerHTML = li(d(USE.gen), t('lg_use_gen')) + li(d(USE.bess), t('lg_use_bess')) + rest + zoneKey();
     Fo.textContent = t('lg_use_f');
   } else if(mode === 'why'){
     T.textContent = t('lg_why');
     B.innerHTML = li(d(WHY.sc), t('lg_why_sc')) + li(d(WHY.th), t('lg_why_th'))
-      + li(d(WHY.both), t('lg_why_both')) + li(d(WHY.ok), t('lg_why_ok'));
+      + li(d(WHY.both), t('lg_why_both')) + li(d(WHY.ok), t('lg_why_ok')) + zoneKey();
     Fo.textContent = t('lg_why_f');
   } else if(mode === 'locked'){
     T.textContent = t('lg_lock');
-    B.innerHTML = li(d(LOCK), t('lg_lock_1')) + rest;
+    B.innerHTML = li(d(LOCK), t('lg_lock_1')) + rest + zoneKey();
     Fo.textContent = t('lg_lock_f');
   } else if(mode === 'hidden'){
     T.textContent = t('lg_hid');
-    B.innerHTML = li('<span class="ring"></span>', t('lg_hid_1')) + rest;
+    B.innerHTML = li('<span class="ring"></span>', t('lg_hid_1')) + rest + zoneKey();
     Fo.textContent = t('lg_hid_f');
   } else if(mode === 'change'){
     T.textContent = t('lg_chg');
     B.innerHTML = li(d(C.G), t('lg_chg_up')) + li(d(C.R), t('lg_chg_dn'))
       + li(`<span class="ring" style="border-color:${LOCK}"></span>`, t('lg_chg_fl'))
-      + li('<span class="dot" style="background:#2a323d"></span>', t('lg_chg_no'));
+      + li('<span class="dot" style="background:#2a323d"></span>', t('lg_chg_no')) + zoneKey();
     Fo.textContent = t('lg_chg_f');
   } else {
     T.textContent = t('lg_space');
     B.innerHTML = li(d(C.G), t('lg_space_g')) + li(d(C.O), t('lg_space_o'))
-      + li(d(C.R), t('lg_space_r'));
+      + li(d(C.R), t('lg_space_r')) + zoneKey();
     Fo.textContent = t('lg_space_f');
   }
 }
