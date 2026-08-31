@@ -40,7 +40,14 @@ def pref_stem(name):
     # collapse Greek genitive/nominative endings to a common stem
     for suf in ("ιας", "ιου", "ων", "ας", "ης", "ος", "ου", "α", "ο", "ς", "η", "υ"):
         if n.endswith(suf) and len(n) - len(suf) >= 4:
-            return n[: -len(suf)]
+            n = n[: -len(suf)]
+            break
+    # The zone lists name prefectures in the nominative ('Κορινθία' -> 'κορινθι')
+    # while OSM uses the genitive ('Κορινθίας' -> 'κορινθ'). Without this, four of
+    # the five Peloponnese prefectures never matched and their substations were
+    # published as available inside a saturated zone.
+    if n.endswith("ι") and len(n) >= 6:
+        n = n[:-1]
     return n
 
 
