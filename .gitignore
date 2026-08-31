@@ -25,6 +25,7 @@ GridGap_Greece.pdf
 # ...EXCEPT the presentation, which is authored by hand and not regenerable.
 # make_deck_maps.py only injects its SVG maps between markers in this file.
 !gridgap_presentation.html
+!gridgap_speaker_notes.html
 
 # Change reports are derived from the archive; regenerate with detect_changes.py.
 data/changes/

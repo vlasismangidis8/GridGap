@@ -111,7 +111,8 @@ def main():
     # margin shown is that transformer's, i.e. the best on site.
     best = {}
     green = {}
-    for r in json.loads((RAW / "margins_2026-08-29.json").read_text(encoding="utf-8")):
+    latest = sorted(RAW.glob("margins_20??-??-??.json"))[-1]
+    for r in json.loads(latest.read_text(encoding="utf-8")):
         sub = r["PERI_Y"]
         vals = [v for v in (numeric(r["TTHP"]), numeric(r["TPBK"])) if v is not None]
         if vals:
